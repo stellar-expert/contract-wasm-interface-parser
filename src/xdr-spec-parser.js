@@ -95,7 +95,7 @@ function parseParameterType(type) {
     const typeName = type.switch().name
     switch (typeName) {
         case 'scSpecTypeOption':
-            return `option<${parseParameterType(type.valueType())}>`
+            return `option<${parseParameterType(type.value().valueType())}>`
         case 'scSpecTypeBytesN':
             return `bytesn<${type.value().n()}>`
         case 'scSpecTypeVec':
