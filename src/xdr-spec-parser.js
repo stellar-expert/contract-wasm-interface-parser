@@ -101,7 +101,7 @@ function parseParameterType(type) {
         case 'scSpecTypeTuple':
             return `tuple<${type.value().valueTypes().map(parseParameterType).join()}>`
         case 'scSpecTypeUdt':
-            return `udt<${type.value().name()}>`
+            return type.value().name()
         default:
             return typeName.replace('scSpecType', '').toLowerCase()
     }
