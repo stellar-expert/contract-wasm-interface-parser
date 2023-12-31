@@ -1,0 +1,16 @@
+{
+  "name": "@stellar-expert/contract-wasm-interface-parser",
+  "version": "1.0.0",
+  "description": "Contract interface metadata parser for binary WASM",
+  "main": "index.js",
+  "module": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stellar-expert/contract-wasm-interface-parser.git"
+  },
+  "author": "orbitlens <orbit@stellar.expert>",
+  "license": "MIT",
+  "peerDependencies": {
+    "@stellar/stellar-base": "^10.0.1"
+  }
+}
