@@ -47,13 +47,7 @@ export function parseSpec(entries) {
                     name: parseStructName(value),
                     cases: value.cases().reduce((agg, c) => {
                         const value = c.value()
-                        const caseType = {
-                            name: value.name().toString()
-                        }
-                        if (value.type) {
-                            caseType.type = value.type().map(parseParameterType)
-                        }
-                        agg[c.switch().name.replace('scSpecUdtUnionCase', '')] = caseType
+                        agg[value.name().toString()] = value.type ? parseParameterType(value.type()[0]) : 'void'
                         return agg
                     }, {})
                 })
