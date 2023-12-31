@@ -47,7 +47,7 @@ export function parseSpec(entries) {
                     name: parseStructName(value),
                     cases: value.cases().reduce((agg, c) => {
                         const value = c.value()
-                        agg[value.name().toString()] = value.type ? parseParameterType(value.type()) : 'void'
+                        agg[value.name().toString()] = value.type ? value.type().map(parseParameterType) : 'void'
                         return agg
                     }, {})
                 })
@@ -57,7 +57,7 @@ export function parseSpec(entries) {
                     name: parseStructName(value),
                     cases: value.cases().reduce((agg, c) => {
                         const value = c.value()
-                        agg[value.name().toString()] = value.value() //TODO: check
+                        agg[value.name().toString()] = value.value()
                         return agg
                     }, {})
                 })
