@@ -95,9 +95,9 @@ function parseParameterType(type) {
         case 'scSpecTypeVec':
             return `vec<${parseParameterType(type.value().elementType())}>`
         case 'scSpecTypeMap':
-            return `map<${parseParameterType(type.value().keyType())},${parseParameter(type.value().valueType())}>`
+            return `map<${parseParameterType(type.value().keyType())},${parseParameterType(type.value().valueType())}>`
         case 'scSpecTypeResult':
-            return `result<${parseParameterType(type.value().okType())},${parseParameter(type.value().errorType())}>`
+            return `result<${parseParameterType(type.value().okType())},${parseParameterType(type.value().errorType())}>`
         case 'scSpecTypeTuple':
             return `tuple<${type.value().valueTypes().map(parseParameterType).join()}>`
         case 'scSpecTypeUdt':
