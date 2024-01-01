@@ -1,6 +1,6 @@
 {
   "name": "@stellar-expert/contract-wasm-interface-parser",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Contract interface metadata parser for binary WASM",
   "main": "index.js",
   "module": "./index.js",

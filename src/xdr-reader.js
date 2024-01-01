@@ -72,7 +72,6 @@ export class XdrReader {
 
     /**
      * Reset reader position
-     * @return {void}
      */
     rewind() {
         this._index = 0
@@ -138,8 +137,6 @@ export class XdrReader {
 
     /**
      * Ensure that input buffer has been consumed in full, otherwise it's a type mismatch
-     * @return {void}
-     * @throws {Error}
      */
     ensureInputConsumed() {
         if (this._index !== this._length)
