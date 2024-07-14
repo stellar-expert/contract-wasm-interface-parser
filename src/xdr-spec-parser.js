@@ -16,100 +16,153 @@ export function parseContractMeta(meta) {
 }
 
 export function parseSpec(entries) {
-    const res = {}
+    return new SpecParser().parse(entries)
+}
 
-    function addSpec(key, descriptor) {
-        let spec = res[key]
+
+class SpecParser {
+    constructor() {
+        this.res = {}
+    }
+
+    /**
+     * @type {{}}
+     */
+    res
+
+    addSpec(key, descriptor, doc) {
+        let spec = this.res[key]
         if (spec === undefined) {
-            spec = res[key] = []
+            spec = this.res[key] = []
         }
-        spec.push(descriptor)
+        spec.push(this.withDocs(descriptor, doc))
     }
 
-    for (const spec of entries) {
-        const value = spec.value()
-        switch (spec._arm) {
-            case 'functionV0':
-                addSpec('functions', {
-                    name: value.name().toString(),
-                    inputs: value.inputs().map(parseParameter),
-                    outputs: value.outputs().map(parseParameterType)
-                })
-                break
-            case 'udtStructV0':
-                addSpec('structs', {
-                    name: parseStructName(value),
-                    fields: value.fields().map(parseParameter)
-                })
-                break
-            case 'udtUnionV0':
-                addSpec('unions', {
-                    name: parseStructName(value),
-                    cases: value.cases().reduce((agg, c) => {
-                        const value = c.value()
-                        agg[value.name().toString()] = value.type ? value.type().map(parseParameterType) : []
-                        return agg
-                    }, {})
-                })
-                break
-            case 'udtEnumV0':
-                addSpec('enums', {
-                    name: parseStructName(value),
-                    cases: value.cases().reduce((agg, c) => {
-                        const value = c.value()
-                        agg[value.name().toString()] = value.value()
-                        return agg
-                    }, {})
-                })
-                break
-            case 'udtErrorEnumV0':
-                addSpec('errors', {
-                    name: parseStructName(value),
-                    cases: value.cases().map(c => ({
-                        name: c.name().toString(),
-                        value: c.value()
-                    }))
-                })
-                break
+    parse(entries) {
+        for (const spec of entries) {
+            const value = spec.value()
+            const {_attributes: attr} = value
+            switch (spec._arm) {
+                case 'functionV0':
+                    this.addSpec('functions', this.parseFunction(attr), attr.doc)
+                    break
+                case 'udtStructV0':
+                    this.addSpec('structs', this.parseStruct(attr), attr.doc)
+                    break
+                case 'udtUnionV0':
+                    this.addSpec('unions', this.parseUnion(attr), attr.doc)
+                    break
+                case 'udtEnumV0':
+                    this.addSpec('enums', this.parseEnum(attr), attr.doc)
+                    break
+                case 'udtErrorEnumV0':
+                    this.addSpec('errors', this.parseError(attr), attr.doc)
+                    break
+                default:
+                    console.log('Unknown spec type: ' + spec._arm)
+                    break
+            }
+        }
+        return this.res
+    }
+
+    parseFunction(attr) {
+        return {
+            name: attr.name.toString(),
+            inputs: attr.inputs.map(i => this.parseParameter(i)),
+            outputs: attr.outputs.map(o => this.parseParameterType(o))
         }
     }
-    return res
+
+    parseStruct(attr) {
+        return {
+            name: this.parseStructName(attr),
+            fields: attr.fields.map(f => this.parseParameter(f))
+        }
+    }
+
+    parseUnion(attr) {
+        return {
+            name: this.parseStructName(attr),
+            cases: attr.cases.reduce((agg, c) => {
+                const value = c.value()
+                agg[value.name().toString()] = value.type ?
+                    value.type().map(t => this.parseParameterType(t)) :
+                    []
+                return agg
+            }, {})
+        }
+    }
+
+    parseEnum(attr) {
+        return {
+            name: this.parseStructName(attr),
+            cases: attr.cases.reduce((agg, c) => {
+                const value = c.value()
+                if (value.name) {
+                    agg[value.name().toString()] = value.value()
+                } else {
+                    agg[c._attributes.name] = value
+                }
+                return agg
+            }, {})
+        }
+    }
+
+    parseError(attr) {
+        return {
+            name: this.parseStructName(attr),
+            cases: attr.cases.map(c => ({
+                name: c.name().toString(),
+                value: c.value()
+            }))
+        }
+    }
+
+    parseParameterType(type) {
+        const typeName = type.switch().name
+        switch (typeName) {
+            case 'scSpecTypeOption':
+                return `option<${this.parseParameterType(type.value().valueType())}>`
+            case 'scSpecTypeBytesN':
+                return `bytesn<${type.value().n()}>`
+            case 'scSpecTypeVec':
+                return `vec<${this.parseParameterType(type.value().elementType())}>`
+            case 'scSpecTypeMap':
+                return `map<${this.parseParameterType(type.value().keyType())},${this.parseParameterType(type.value().valueType())}>`
+            case 'scSpecTypeResult':
+                return `result<${this.parseParameterType(type.value().okType())},${this.parseParameterType(type.value().errorType())}>`
+            case 'scSpecTypeTuple':
+                return `tuple<${type.value().valueTypes().map(this.parseParameterType).join()}>`
+            case 'scSpecTypeUdt':
+                return type.value().name().toString()
+            default:
+                return typeName.replace('scSpecType', '').toLowerCase()
+        }
+    }
+
+    parseStructName(value) {
+        let structName = value.name.toString()
+        if (value.lib.length) {
+            structName += ':' + value.lib.toString()
+        }
+        return structName
+    }
+
+    parseParameter(param) {
+        const {_attributes: attr} = param
+        const res = {
+            name: attr.name.toString(),
+            type: this.parseParameterType(attr.type)
+        }
+        return this.withDocs(res, attr.doc)
+    }
+
+    withDocs(descriptor, doc) {
+        if (doc?.length) {
+            descriptor.doc = doc.toString()
+        }
+        return descriptor
+    }
 }
 
-function parseStructName(value) {
-    let structName = value.name().toString()
-    const lib = value.lib()
-    if (lib.length) {
-        structName += ':' + lib.toString()
-    }
-    return structName
-}
-
-function parseParameterType(type) {
-    const typeName = type.switch().name
-    switch (typeName) {
-        case 'scSpecTypeOption':
-            return `option<${parseParameterType(type.value().valueType())}>`
-        case 'scSpecTypeBytesN':
-            return `bytesn<${type.value().n()}>`
-        case 'scSpecTypeVec':
-            return `vec<${parseParameterType(type.value().elementType())}>`
-        case 'scSpecTypeMap':
-            return `map<${parseParameterType(type.value().keyType())},${parseParameterType(type.value().valueType())}>`
-        case 'scSpecTypeResult':
-            return `result<${parseParameterType(type.value().okType())},${parseParameterType(type.value().errorType())}>`
-        case 'scSpecTypeTuple':
-            return `tuple<${type.value().valueTypes().map(parseParameterType).join()}>`
-        case 'scSpecTypeUdt':
-            return type.value().name()
-        default:
-            return typeName.replace('scSpecType', '').toLowerCase()
-    }
-}
-
-function parseParameter(param) {
-    return {
-        name: param.name().toString(),
-        type: parseParameterType(param.type())
-    }
-}
