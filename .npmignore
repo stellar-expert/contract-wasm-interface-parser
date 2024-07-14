@@ -5,3 +5,5 @@ pnpm-lock.yaml
 .idea
 .vscode
 
+!.npmrc
+test/
