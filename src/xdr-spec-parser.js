@@ -30,12 +30,13 @@ class SpecParser {
      */
     res
 
-    addSpec(key, descriptor, doc) {
+    addSpec(key, attr, parser) {
+        //this.parseFunction(attr), attr.doc
         let spec = this.res[key]
         if (spec === undefined) {
-            spec = this.res[key] = []
+            spec = this.res[key] = {}
         }
-        spec.push(this.withDocs(descriptor, doc))
+        parser.call(this, attr, spec)
     }
 
     parse(entries) {
@@ -44,19 +45,19 @@ class SpecParser {
             const {_attributes: attr} = value
             switch (spec._arm) {
                 case 'functionV0':
-                    this.addSpec('functions', this.parseFunction(attr), attr.doc)
+                    this.addSpec('functions', attr, this.parseFunction)
                     break
                 case 'udtStructV0':
-                    this.addSpec('structs', this.parseStruct(attr), attr.doc)
+                    this.addSpec('structs', attr, this.parseStruct)
                     break
                 case 'udtUnionV0':
-                    this.addSpec('unions', this.parseUnion(attr), attr.doc)
+                    this.addSpec('unions', attr, this.parseUnion)
                     break
                 case 'udtEnumV0':
-                    this.addSpec('enums', this.parseEnum(attr), attr.doc)
+                    this.addSpec('enums', attr, this.parseEnum)
                     break
                 case 'udtErrorEnumV0':
-                    this.addSpec('errors', this.parseError(attr), attr.doc)
+                    this.addSpec('errors', attr, this.parseError)
                     break
                 default:
                     console.log('Unknown spec type: ' + spec._arm)
@@ -66,57 +67,47 @@ class SpecParser {
         return this.res
     }
 
-    parseFunction(attr) {
-        return {
-            name: attr.name.toString(),
-            inputs: attr.inputs.map(i => this.parseParameter(i)),
+    parseFunction(attr, into) {
+        const inputs = {}
+        attr.inputs.forEach(i => this.parseParameter(i, inputs))
+        into[attr.name.toString()] = this.withDocs({
+            inputs,
             outputs: attr.outputs.map(o => this.parseParameterType(o))
-        }
+        }, attr.doc)
     }
 
-    parseStruct(attr) {
-        return {
-            name: this.parseStructName(attr),
-            fields: attr.fields.map(f => this.parseParameter(f))
-        }
+    parseStruct(attr, into) {
+        const fields = {}
+        attr.fields.forEach(f => this.parseParameter(f, fields))
+        into[this.parseStructName(attr)] = this.withDocs(fields, attr.doc)
     }
 
-    parseUnion(attr) {
-        return {
-            name: this.parseStructName(attr),
-            cases: attr.cases.reduce((agg, c) => {
-                const value = c.value()
-                agg[value.name().toString()] = value.type ?
-                    value.type().map(t => this.parseParameterType(t)) :
-                    []
-                return agg
-            }, {})
-        }
+    parseUnion(attr, into) {
+        const cases = {}
+        attr.cases.forEach(c => {
+            const value = c.value()
+            cases[value.name().toString()] = value.type ?
+                value.type().map(t => this.parseParameterType(t)) :
+                []
+        })
+        into[this.parseStructName(attr)] = this.withDocs(cases, attr.doc)
     }
 
-    parseEnum(attr) {
-        return {
-            name: this.parseStructName(attr),
-            cases: attr.cases.reduce((agg, c) => {
-                const value = c.value()
-                if (value.name) {
-                    agg[value.name().toString()] = value.value()
-                } else {
-                    agg[c._attributes.name] = value
-                }
-                return agg
-            }, {})
-        }
+    parseEnum(attr, into) {
+        const cases = {}
+        attr.cases.forEach(c => {
+            const value = c.value()
+            if (value.name) {
+                cases[value.name().toString()] = value.value()
+            } else {
+                cases[c._attributes.name.toString()] = this.withDocs({value}, c.doc())
+            }
+        })
+        into[this.parseStructName(attr)] = this.withDocs(cases, attr.doc)
     }
 
-    parseError(attr) {
-        return {
-            name: this.parseStructName(attr),
-            cases: attr.cases.map(c => ({
-                name: c.name().toString(),
-                value: c.value()
-            }))
-        }
+    parseError(attr, into) {
+        attr.cases.forEach(c => into[c.name().toString()] = this.withDocs({value: c.value()}, c.doc()))
     }
 
     parseParameterType(type) {
@@ -149,13 +140,9 @@ class SpecParser {
         return structName
     }
 
-    parseParameter(param) {
+    parseParameter(param, into) {
         const {_attributes: attr} = param
-        const res = {
-            name: attr.name.toString(),
-            type: this.parseParameterType(attr.type)
-        }
-        return this.withDocs(res, attr.doc)
+        into[attr.name.toString()] = this.withDocs({type: this.parseParameterType(attr.type)}, attr.doc)
     }
 
     withDocs(descriptor, doc) {

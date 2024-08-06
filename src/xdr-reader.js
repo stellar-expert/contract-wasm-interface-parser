@@ -1,4 +1,19 @@
-export class XdrReader {
+/**
+ *
+ * @param {Buffer} buffer
+ * @param {{read: function}} xdrContract
+ * @return {{}[]}
+ */
+export function parseSectionEntriesXdr(buffer, xdrContract) {
+    const reader = new XdrReader(buffer)
+    const entries = []
+    while (!reader.eof) {
+        entries.push(xdrContract.read(reader))
+    }
+    return entries
+}
+
+class XdrReader {
     /**
      * @constructor
      * @param {Buffer} source - Buffer containing serialized data

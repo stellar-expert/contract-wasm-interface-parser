@@ -1,12 +1,12 @@
 import {xdr} from '@stellar/stellar-base'
-import {XdrReader} from './src/xdr-reader'
+import {parseSectionEntriesXdr} from './src/xdr-reader'
 import {WasmSectionReader} from './src/wasm-section-reader'
 import {parseContractMeta, parseSpec} from './src/xdr-spec-parser'
 
 /**
  * Parse contract metadata from WASM sections
  * @param {Buffer} rawWasm
- * @return {{}}
+ * @return {ParsedWasmMeta}
  */
 export function parseContractMetadata(rawWasm) {
     const wasmSectionReader = new WasmSectionReader(rawWasm)
@@ -18,21 +18,24 @@ export function parseContractMetadata(rawWasm) {
                 res.interfaceVersion = xdr.ScEnvMetaEntry.fromXDR(section.contents).value().toString()
                 break
             case 'contractmetav0':
-                Object.assign(res, parseContractMeta(parseEntries(section.contents, xdr.ScMetaEntry)))
+                Object.assign(res, parseContractMeta(parseSectionEntriesXdr(section.contents, xdr.ScMetaEntry)))
                 break
             case 'contractspecv0':
-                Object.assign(res, parseSpec(parseEntries(section.contents, xdr.ScSpecEntry)))
+                Object.assign(res, parseSpec(parseSectionEntriesXdr(section.contents, xdr.ScSpecEntry)))
                 break
         }
     }
     return res
 }
 
-function parseEntries(buffer, xdrContract) {
-    const reader = new XdrReader(buffer)
-    const entries = []
-    while (!reader.eof) {
-        entries.push(xdrContract.read(reader))
-    }
-    return entries
-}
+/**
+ * @typedef {{}} ParsedWasmMeta
+ * @property {{}} functions
+ * @property {{}} [errors]
+ * @property {{}} [enums]
+ * @property {{}} [structs]
+ * @property {{}} [unions]
+ * @property {string} rustVersion
+ * @property {string} sdkVersion
+ * @property {string} interfaceVersion
+ */
