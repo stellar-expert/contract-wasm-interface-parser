@@ -73,13 +73,13 @@ class SpecParser {
         into[attr.name.toString()] = this.withDocs({
             inputs,
             outputs: attr.outputs.map(o => this.parseParameterType(o))
-        }, attr.doc)
+        }, attr)
     }
 
     parseStruct(attr, into) {
         const fields = {}
         attr.fields.forEach(f => this.parseParameter(f, fields))
-        into[this.parseStructName(attr)] = this.withDocs(fields, attr.doc)
+        into[this.parseStructName(attr)] = this.withDocs({fields}, attr)
     }
 
     parseUnion(attr, into) {
@@ -90,7 +90,7 @@ class SpecParser {
                 value.type().map(t => this.parseParameterType(t)) :
                 []
         })
-        into[this.parseStructName(attr)] = this.withDocs(cases, attr.doc)
+        into[this.parseStructName(attr)] = this.withDocs({cases}, attr)
     }
 
     parseEnum(attr, into) {
@@ -100,14 +100,18 @@ class SpecParser {
             if (value.name) {
                 cases[value.name().toString()] = value.value()
             } else {
-                cases[c._attributes.name.toString()] = this.withDocs({value}, c.doc())
+                const attr = c._attributes
+                cases[attr.name.toString()] = this.withDocs({value}, attr)
             }
         })
-        into[this.parseStructName(attr)] = this.withDocs(cases, attr.doc)
+        into[this.parseStructName(attr)] = this.withDocs({cases}, attr)
     }
 
     parseError(attr, into) {
-        attr.cases.forEach(c => into[c.name().toString()] = this.withDocs({value: c.value()}, c.doc()))
+        attr.cases.forEach(c => {
+            const attr = c._attributes
+            into[attr.name.toString()] = this.withDocs({value: attr.value}, attr)
+        })
     }
 
     parseParameterType(type) {
@@ -141,13 +145,13 @@ class SpecParser {
     }
 
     parseParameter(param, into) {
-        const {_attributes: attr} = param
-        into[attr.name.toString()] = this.withDocs({type: this.parseParameterType(attr.type)}, attr.doc)
+        const attr = param._attributes
+        into[attr.name.toString()] = this.withDocs({type: this.parseParameterType(attr.type)}, attr)
     }
 
-    withDocs(descriptor, doc) {
-        if (doc?.length) {
-            descriptor.doc = doc.toString()
+    withDocs(descriptor, attr) {
+        if (attr.doc?.length) {
+            descriptor.doc = attr.doc.toString()
         }
         return descriptor
     }

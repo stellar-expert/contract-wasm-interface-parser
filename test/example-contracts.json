@@ -4,14 +4,16 @@
     "interface": {
       "enums": {
         "SubscriptionStatus": {
-          "Active": {
-            "value": 0
-          },
-          "Cancelled": {
-            "value": 2
-          },
-          "Suspended": {
-            "value": 1
+          "cases": {
+            "Active": {
+              "value": 0
+            },
+            "Cancelled": {
+              "value": 2
+            },
+            "Suspended": {
+              "value": 1
+            }
           }
         }
       },
@@ -160,82 +162,92 @@
       },
       "structs": {
         "ConfigData": {
-          "admin": {
-            "type": "address"
-          },
-          "fee": {
-            "type": "u64"
-          },
-          "token": {
-            "type": "address"
+          "fields": {
+            "admin": {
+              "type": "address"
+            },
+            "fee": {
+              "type": "u64"
+            },
+            "token": {
+              "type": "address"
+            }
           }
         },
         "CreateSubscription": {
-          "asset1": {
-            "type": "TickerAsset"
-          },
-          "asset2": {
-            "type": "TickerAsset"
-          },
-          "heartbeat": {
-            "type": "u32"
-          },
-          "owner": {
-            "type": "address"
-          },
-          "threshold": {
-            "type": "u32"
-          },
-          "webhook": {
-            "type": "bytes"
+          "fields": {
+            "asset1": {
+              "type": "TickerAsset"
+            },
+            "asset2": {
+              "type": "TickerAsset"
+            },
+            "heartbeat": {
+              "type": "u32"
+            },
+            "owner": {
+              "type": "address"
+            },
+            "threshold": {
+              "type": "u32"
+            },
+            "webhook": {
+              "type": "bytes"
+            }
           }
         },
         "Subscription": {
-          "asset1": {
-            "type": "TickerAsset"
-          },
-          "asset2": {
-            "type": "TickerAsset"
-          },
-          "balance": {
-            "type": "u64"
-          },
-          "heartbeat": {
-            "type": "u32"
-          },
-          "last_charge": {
-            "type": "u64"
-          },
-          "owner": {
-            "type": "address"
-          },
-          "status": {
-            "type": "SubscriptionStatus"
-          },
-          "threshold": {
-            "type": "u32"
-          },
-          "webhook": {
-            "type": "bytes"
+          "fields": {
+            "asset1": {
+              "type": "TickerAsset"
+            },
+            "asset2": {
+              "type": "TickerAsset"
+            },
+            "balance": {
+              "type": "u64"
+            },
+            "heartbeat": {
+              "type": "u32"
+            },
+            "last_charge": {
+              "type": "u64"
+            },
+            "owner": {
+              "type": "address"
+            },
+            "status": {
+              "type": "SubscriptionStatus"
+            },
+            "threshold": {
+              "type": "u32"
+            },
+            "webhook": {
+              "type": "bytes"
+            }
           }
         },
         "TickerAsset": {
-          "asset": {
-            "type": "Asset"
-          },
-          "source": {
-            "type": "string"
+          "fields": {
+            "asset": {
+              "type": "Asset"
+            },
+            "source": {
+              "type": "string"
+            }
           }
         }
       },
       "unions": {
         "Asset": {
-          "Other": [
-            "symbol"
-          ],
-          "Stellar": [
-            "address"
-          ]
+          "cases": {
+            "Other": [
+              "symbol"
+            ],
+            "Stellar": [
+              "address"
+            ]
+          }
         }
       },
       "interfaceVersion": "85899345920",
@@ -248,35 +260,39 @@
     "interface": {
       "enums": {
         "BallotCategory": {
-          "AddAsset": {
-            "value": 2
-          },
-          "AddNode": {
-            "value": 0
-          },
-          "AddPriceFeed": {
-            "value": 1
-          },
-          "General": {
-            "value": 3
+          "cases": {
+            "AddAsset": {
+              "value": 2
+            },
+            "AddNode": {
+              "value": 0
+            },
+            "AddPriceFeed": {
+              "value": 1
+            },
+            "General": {
+              "value": 3
+            }
           }
         },
         "BallotStatus": {
-          "Accepted": {
-            "doc": "Accepted by DAO members",
-            "value": 1
-          },
-          "Draft": {
-            "doc": "Ballot has been recently created and has no votes yet",
-            "value": 0
-          },
-          "Rejected": {
-            "doc": "Rejected by DAO members",
-            "value": 2
-          },
-          "Retracted": {
-            "doc": "Retracted by the initiator",
-            "value": 3
+          "cases": {
+            "Accepted": {
+              "doc": "Accepted by DAO members",
+              "value": 1
+            },
+            "Draft": {
+              "doc": "Ballot has been recently created and has no votes yet",
+              "value": 0
+            },
+            "Rejected": {
+              "doc": "Rejected by DAO members",
+              "value": 2
+            },
+            "Retracted": {
+              "doc": "Retracted by the initiator",
+              "value": 3
+            }
           }
         }
       },
@@ -421,73 +437,79 @@
       },
       "structs": {
         "Ballot": {
-          "category": {
-            "doc": "Ballot type",
-            "type": "BallotCategory"
+          "fields": {
+            "category": {
+              "doc": "Ballot type",
+              "type": "BallotCategory"
+            },
+            "created": {
+              "doc": "Creation timestamp",
+              "type": "u64"
+            },
+            "deposit": {
+              "doc": "Deposited DAO tokens amount",
+              "type": "i128"
+            },
+            "description": {
+              "doc": "Description text or URL",
+              "type": "string"
+            },
+            "initiator": {
+              "doc": "Address of the initiator account",
+              "type": "address"
+            },
+            "status": {
+              "doc": "Current status",
+              "type": "BallotStatus"
+            },
+            "title": {
+              "doc": "Short title",
+              "type": "string"
+            }
           },
-          "created": {
-            "doc": "Creation timestamp",
-            "type": "u64"
-          },
-          "deposit": {
-            "doc": "Deposited DAO tokens amount",
-            "type": "i128"
-          },
-          "description": {
-            "doc": "Description text or URL",
-            "type": "string"
-          },
-          "doc": "Ballot registered in DAO contract",
-          "initiator": {
-            "doc": "Address of the initiator account",
-            "type": "address"
-          },
-          "status": {
-            "doc": "Current status",
-            "type": "BallotStatus"
-          },
-          "title": {
-            "doc": "Short title",
-            "type": "string"
-          }
+          "doc": "Ballot registered in DAO contract"
         },
         "BallotInitParams": {
-          "category": {
-            "doc": "Ballot type",
-            "type": "BallotCategory"
+          "fields": {
+            "category": {
+              "doc": "Ballot type",
+              "type": "BallotCategory"
+            },
+            "description": {
+              "doc": "Description text or URL",
+              "type": "string"
+            },
+            "initiator": {
+              "doc": "Initiator account address",
+              "type": "address"
+            },
+            "title": {
+              "doc": "Short title",
+              "type": "string"
+            }
           },
-          "description": {
-            "doc": "Description text or URL",
-            "type": "string"
-          },
-          "doc": "New ballot initialization parameters",
-          "initiator": {
-            "doc": "Initiator account address",
-            "type": "address"
-          },
-          "title": {
-            "doc": "Short title",
-            "type": "string"
-          }
+          "doc": "New ballot initialization parameters"
         },
         "ContractConfig": {
-          "admin": {
-            "doc": "Admin account address",
-            "type": "address"
+          "fields": {
+            "admin": {
+              "doc": "Admin account address",
+              "type": "address"
+            },
+            "amount": {
+              "doc": "Initial funding amount",
+              "type": "i128"
+            },
+            "deposit_params": {
+              "doc": "Initial deposit amounts for each ballot category",
+              "type": "map<BallotCategory,i128>"
+            },
+            "token": {
+              "doc": "DAO token address",
+              "type": "address"
+            }
           },
-          "amount": {
-            "doc": "Initial funding amount",
-            "type": "i128"
-          },
-          "deposit_params": {
-            "doc": "Initial deposit amounts for each ballot category",
-            "type": "map<BallotCategory,i128>"
-          },
-          "doc": "DAO contract configuration parameters",
-          "token": {
-            "doc": "DAO token address",
-            "type": "address"
-          }
+          "doc": "DAO contract configuration parameters"
         }
       },
       "interfaceVersion": "90194313216",

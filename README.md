@@ -22,14 +22,16 @@ Example output:
 {
   "enums": {
     "SubscriptionStatus": {
-      "Active": {
-        "value": 0
-      },
-      "Cancelled": {
-        "value": 2
-      },
-      "Suspended": {
-        "value": 1
+      "cases": {
+        "Active": {
+          "value": 0
+        },
+        "Cancelled": {
+          "value": 2
+        },
+        "Suspended": {
+          "value": 1
+        }
       }
     }
   },
@@ -178,82 +180,92 @@ Example output:
   },
   "structs": {
     "ConfigData": {
-      "admin": {
-        "type": "address"
-      },
-      "fee": {
-        "type": "u64"
-      },
-      "token": {
-        "type": "address"
+      "fields": {
+        "admin": {
+          "type": "address"
+        },
+        "fee": {
+          "type": "u64"
+        },
+        "token": {
+          "type": "address"
+        }
       }
     },
     "CreateSubscription": {
-      "asset1": {
-        "type": "TickerAsset"
-      },
-      "asset2": {
-        "type": "TickerAsset"
-      },
-      "heartbeat": {
-        "type": "u32"
-      },
-      "owner": {
-        "type": "address"
-      },
-      "threshold": {
-        "type": "u32"
-      },
-      "webhook": {
-        "type": "bytes"
+      "fields": {
+        "asset1": {
+          "type": "TickerAsset"
+        },
+        "asset2": {
+          "type": "TickerAsset"
+        },
+        "heartbeat": {
+          "type": "u32"
+        },
+        "owner": {
+          "type": "address"
+        },
+        "threshold": {
+          "type": "u32"
+        },
+        "webhook": {
+          "type": "bytes"
+        }
       }
     },
     "Subscription": {
-      "asset1": {
-        "type": "TickerAsset"
-      },
-      "asset2": {
-        "type": "TickerAsset"
-      },
-      "balance": {
-        "type": "u64"
-      },
-      "heartbeat": {
-        "type": "u32"
-      },
-      "last_charge": {
-        "type": "u64"
-      },
-      "owner": {
-        "type": "address"
-      },
-      "status": {
-        "type": "SubscriptionStatus"
-      },
-      "threshold": {
-        "type": "u32"
-      },
-      "webhook": {
-        "type": "bytes"
+      "fields": {
+        "asset1": {
+          "type": "TickerAsset"
+        },
+        "asset2": {
+          "type": "TickerAsset"
+        },
+        "balance": {
+          "type": "u64"
+        },
+        "heartbeat": {
+          "type": "u32"
+        },
+        "last_charge": {
+          "type": "u64"
+        },
+        "owner": {
+          "type": "address"
+        },
+        "status": {
+          "type": "SubscriptionStatus"
+        },
+        "threshold": {
+          "type": "u32"
+        },
+        "webhook": {
+          "type": "bytes"
+        }
       }
     },
     "TickerAsset": {
-      "asset": {
-        "type": "Asset"
-      },
-      "source": {
-        "type": "string"
+      "fields": {
+        "asset": {
+          "type": "Asset"
+        },
+        "source": {
+          "type": "string"
+        }
       }
     }
   },
   "unions": {
     "Asset": {
-      "Other": [
-        "symbol"
-      ],
-      "Stellar": [
-        "address"
-      ]
+      "cases": {
+        "Other": [
+          "symbol"
+        ],
+        "Stellar": [
+          "address"
+        ]
+      }
     }
   },
   "interfaceVersion": "85899345920",
