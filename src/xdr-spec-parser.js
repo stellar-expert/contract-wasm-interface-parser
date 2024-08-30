@@ -128,7 +128,7 @@ class SpecParser {
             case 'scSpecTypeResult':
                 return `result<${this.parseParameterType(type.value().okType())},${this.parseParameterType(type.value().errorType())}>`
             case 'scSpecTypeTuple':
-                return `tuple<${type.value().valueTypes().map(this.parseParameterType).join()}>`
+                return `tuple<${type.value().valueTypes().map(v => this.parseParameterType(v)).join()}>`
             case 'scSpecTypeUdt':
                 return type.value().name().toString()
             default:
