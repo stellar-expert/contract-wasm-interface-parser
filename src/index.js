@@ -1,7 +1,7 @@
 import {xdr} from '@stellar/stellar-base'
-import {parseSectionEntriesXdr} from './src/xdr-reader'
-import {WasmSectionReader} from './src/wasm-section-reader'
-import {parseContractMeta, parseSpec} from './src/xdr-spec-parser'
+import {parseSectionEntriesXdr} from './xdr-reader'
+import {WasmSectionReader} from './wasm-section-reader'
+import {parseContractMeta, parseSpec} from './xdr-spec-parser'
 
 /**
  * Parse contract metadata from WASM sections
@@ -27,6 +27,10 @@ export function parseContractMetadata(rawWasm) {
     }
     return res
 }
+
+const index = {parseContractMetadata}
+
+export default index
 
 /**
  * @typedef {{}} ParsedWasmMeta

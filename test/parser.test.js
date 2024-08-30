@@ -1,5 +1,5 @@
 import examples from './example-contracts.json'
-import {parseContractMetadata} from '../index'
+import {parseContractMetadata} from '../src'
 
 describe('Parser', () => {
     test('parse subscription example meta', () => {
