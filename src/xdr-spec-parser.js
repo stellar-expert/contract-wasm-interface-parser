@@ -10,6 +10,9 @@ export function parseContractMeta(meta) {
             case 'rssdkver':
                 res.sdkVersion = val
                 break
+            default:
+                res[key] = val
+                break
         }
     }
     return res
@@ -59,6 +62,9 @@ class SpecParser {
                 case 'udtErrorEnumV0':
                     this.addSpec('errors', attr, this.parseError)
                     break
+                case 'eventV0':
+                    this.addSpec('events', attr, this.parseEvent)
+                    break
                 default:
                     console.log('Unknown spec type: ' + spec._arm)
                     break
@@ -68,34 +74,34 @@ class SpecParser {
     }
 
     parseFunction(attr, into) {
-        const inputs = {}
-        attr.inputs.forEach(i => this.parseParameter(i, inputs))
         into[attr.name.toString()] = this.withDocs({
-            inputs,
+            inputs: attr.inputs.map(a => this.parseFuncArgument(a)),
             outputs: attr.outputs.map(o => this.parseParameterType(o))
         }, attr)
     }
 
     parseStruct(attr, into) {
         const fields = {}
-        attr.fields.forEach(f => this.parseParameter(f, fields))
+        for (const f of attr.fields) {
+            this.parseParameter(f, fields)
+        }
         into[this.parseStructName(attr)] = this.withDocs({fields}, attr)
     }
 
     parseUnion(attr, into) {
         const cases = {}
-        attr.cases.forEach(c => {
+        for (const c of attr.cases) {
             const value = c.value()
             cases[value.name().toString()] = value.type ?
                 value.type().map(t => this.parseParameterType(t)) :
                 []
-        })
+        }
         into[this.parseStructName(attr)] = this.withDocs({cases}, attr)
     }
 
     parseEnum(attr, into) {
         const cases = {}
-        attr.cases.forEach(c => {
+        for (const c of attr.cases) {
             const value = c.value()
             if (value.name) {
                 cases[value.name().toString()] = value.value()
@@ -103,36 +109,69 @@ class SpecParser {
                 const attr = c._attributes
                 cases[attr.name.toString()] = this.withDocs({value}, attr)
             }
-        })
+        }
         into[this.parseStructName(attr)] = this.withDocs({cases}, attr)
     }
 
     parseError(attr, into) {
-        attr.cases.forEach(c => {
+        for (const c of attr.cases) {
             const attr = c._attributes
             into[attr.name.toString()] = this.withDocs({value: attr.value}, attr)
-        })
+        }
+    }
+
+    parseEvent(attr, into) {
+        let dataFormat
+        switch (attr.dataFormat.value) {
+            case 1:
+                dataFormat = 'Vec'
+                break
+            case 2:
+                dataFormat = 'Map'
+                break
+            default:
+                dataFormat = attr.dataFormat.name
+                break
+        }
+        const evt = {
+            prefixTopics: attr.prefixTopics.map(t => t.toString()),
+            params: attr.params.map(p => {
+                const pa = p._attributes
+                const param = {
+                    name: pa.name.toString(),
+                    type: this.parseParameterType(pa.type),
+                    location: pa.location.value === 0 ? 'data' : 'topics'
+                }
+                return this.withDocs(param, pa)
+            }),
+            dataFormat
+        }
+        into[this.parseStructName(attr)] = this.withDocs(evt, attr)
     }
 
     parseParameterType(type) {
         const typeName = type.switch().name
         switch (typeName) {
             case 'scSpecTypeOption':
-                return `option<${this.parseParameterType(type.value().valueType())}>`
+                return `Option<${this.parseParameterType(type.value().valueType())}>`
             case 'scSpecTypeBytesN':
-                return `bytesn<${type.value().n()}>`
+                return `BytesN<${type.value().n()}>`
             case 'scSpecTypeVec':
-                return `vec<${this.parseParameterType(type.value().elementType())}>`
+                return `Vec<${this.parseParameterType(type.value().elementType())}>`
             case 'scSpecTypeMap':
-                return `map<${this.parseParameterType(type.value().keyType())},${this.parseParameterType(type.value().valueType())}>`
+                return `Map<${this.parseParameterType(type.value().keyType())}, ${this.parseParameterType(type.value().valueType())}>`
             case 'scSpecTypeResult':
-                return `result<${this.parseParameterType(type.value().okType())},${this.parseParameterType(type.value().errorType())}>`
+                return `Result<${this.parseParameterType(type.value().okType())}, ${this.parseParameterType(type.value().errorType())}>`
             case 'scSpecTypeTuple':
-                return `tuple<${type.value().valueTypes().map(v => this.parseParameterType(v)).join()}>`
+                return `(${type.value().valueTypes().map(v => this.parseParameterType(v)).join(', ')})`
             case 'scSpecTypeUdt':
                 return type.value().name().toString()
             default:
-                return typeName.replace('scSpecType', '').toLowerCase()
+                let res = typeName.replace('scSpecType', '')
+                if (/^[IU](8|16|32|64|128)$/.test(res) || res === 'Bool') { //remap standard int types
+                    res = res.toLowerCase()
+                }
+                return res
         }
     }
 
@@ -147,6 +186,14 @@ class SpecParser {
     parseParameter(param, into) {
         const attr = param._attributes
         into[attr.name.toString()] = this.withDocs({type: this.parseParameterType(attr.type)}, attr)
+    }
+
+    parseFuncArgument(arg) {
+        const attr = arg._attributes
+        return this.withDocs({
+            name: attr.name.toString(),
+            type: this.parseParameterType(attr.type)
+        }, attr)
     }
 
     withDocs(descriptor, attr) {

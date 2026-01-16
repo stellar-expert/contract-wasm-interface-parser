@@ -1,6 +1,6 @@
 {
   "name": "@stellar-expert/contract-wasm-interface-parser",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "Contract interface metadata parser for binary WASM",
   "author": "orbitlens <orbit@stellar.expert>",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "@stellar/stellar-base": ">=12"
+    "@stellar/stellar-base": ">=14"
   },
   "devDependencies": {
     "@babel/core": "^7.24.8",

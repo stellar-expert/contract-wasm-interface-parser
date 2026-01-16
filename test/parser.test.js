@@ -12,4 +12,9 @@ describe('Parser', () => {
         const parsed = parseContractMetadata(Buffer.from(docs.wasm, 'base64'))
         expect(parsed).toEqual(docs.interface)
     })
+    test('parse events', () => {
+        const {events} = examples
+        const parsed = parseContractMetadata(Buffer.from(events.wasm, 'base64'))
+        expect(parsed).toEqual(events.interface)
+    })
 })

@@ -15,13 +15,17 @@ export function parseContractMetadata(rawWasm) {
     for (const section of sections) {
         switch (section.name) {
             case 'contractenvmetav0':
-                res.interfaceVersion = xdr.ScEnvMetaEntry.fromXDR(section.contents).value().toString()
+                const v = xdr.ScEnvMetaEntry.fromXDR(section.contents).value()._attributes
+                res.interfaceVersion = `${v.protocol}.${v.preRelease}`
                 break
             case 'contractmetav0':
                 Object.assign(res, parseContractMeta(parseSectionEntriesXdr(section.contents, xdr.ScMetaEntry)))
                 break
             case 'contractspecv0':
                 Object.assign(res, parseSpec(parseSectionEntriesXdr(section.contents, xdr.ScSpecEntry)))
+                break
+            default:
+                res[section.name] = section.contents.toString()
                 break
         }
     }

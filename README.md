@@ -68,7 +68,7 @@ Example output:
     "admin": {
       "inputs": {},
       "outputs": [
-        "option<address>"
+        "Option<Address>"
       ]
     },
     "cancel": {
@@ -82,7 +82,7 @@ Example output:
     "charge": {
       "inputs": {
         "subscription_ids": {
-          "type": "vec<u64>"
+          "type": "Vec<u64>"
         }
       },
       "outputs": []
@@ -105,7 +105,7 @@ Example output:
         }
       },
       "outputs": [
-        "tuple<u64,Subscription>"
+        "(u64, Subscription)"
       ]
     },
     "deposit": {
@@ -114,7 +114,7 @@ Example output:
           "type": "u64"
         },
         "from": {
-          "type": "address"
+          "type": "Address"
         },
         "subscription_id": {
           "type": "u64"
@@ -158,7 +158,7 @@ Example output:
           "type": "u64"
         },
         "trigger_hash": {
-          "type": "bytesn<32>"
+          "type": "BytesN<32>"
         }
       },
       "outputs": []
@@ -166,7 +166,7 @@ Example output:
     "update_contract": {
       "inputs": {
         "wasm_hash": {
-          "type": "bytesn<32>"
+          "type": "BytesN<32>"
         }
       },
       "outputs": []
@@ -182,13 +182,13 @@ Example output:
     "ConfigData": {
       "fields": {
         "admin": {
-          "type": "address"
+          "type": "Address"
         },
         "fee": {
           "type": "u64"
         },
         "token": {
-          "type": "address"
+          "type": "Address"
         }
       }
     },
@@ -204,13 +204,13 @@ Example output:
           "type": "u32"
         },
         "owner": {
-          "type": "address"
+          "type": "Address"
         },
         "threshold": {
           "type": "u32"
         },
         "webhook": {
-          "type": "bytes"
+          "type": "Bytes"
         }
       }
     },
@@ -232,7 +232,7 @@ Example output:
           "type": "u64"
         },
         "owner": {
-          "type": "address"
+          "type": "Address"
         },
         "status": {
           "type": "SubscriptionStatus"
@@ -241,7 +241,7 @@ Example output:
           "type": "u32"
         },
         "webhook": {
-          "type": "bytes"
+          "type": "Bytes"
         }
       }
     },
@@ -268,7 +268,7 @@ Example output:
       }
     }
   },
-  "interfaceVersion": "85899345920",
+  "interfaceVersion": "20.0",
   "rustVersion": "1.74.0",
   "sdkVersion": "20.5.0#9e2c3022b4355b224a7a814e13ba51761eeb14bb"
 }
