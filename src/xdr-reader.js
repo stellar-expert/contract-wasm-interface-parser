@@ -157,4 +157,13 @@ class XdrReader {
         if (this._index !== this._length)
             throw new Error(`Invalid XDR contract typecast - source buffer not entirely consumed`)
     }
+
+    /**
+     * Get number of bytes remaining in buffer
+     * @returns {Number}
+     */
+    remainingBytes() {
+        return this._length - this._index
+    }
+
 }
