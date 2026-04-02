@@ -165,5 +165,4 @@ class XdrReader {
     remainingBytes() {
         return this._length - this._index
     }
-
 }
