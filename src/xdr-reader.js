@@ -159,8 +159,7 @@ class XdrReader {
     }
 
     /**
-     * Returns the number of bytes remaining in the buffer.
-     * Required for compatibility with @stellar/stellar-base XDR types.
+     * Get number of bytes remaining in buffer
      * @returns {Number}
      */
     remainingBytes() {
