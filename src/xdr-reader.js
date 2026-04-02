@@ -157,4 +157,14 @@ class XdrReader {
         if (this._index !== this._length)
             throw new Error(`Invalid XDR contract typecast - source buffer not entirely consumed`)
     }
+
+    /**
+     * Returns the number of bytes remaining in the buffer.
+     * Required for compatibility with @stellar/stellar-base XDR types.
+     * @returns {Number}
+     */
+    remainingBytes() {
+        return this._length - this._index
+    }
+
 }
