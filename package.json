@@ -1,13 +1,16 @@
 {
   "name": "@stellar-expert/contract-wasm-interface-parser",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "Contract interface metadata parser for binary WASM",
   "author": "orbitlens <orbit@stellar.expert>",
   "license": "MIT",
+  "type": "module",
   "main": "lib/wasmparser.js",
   "module": "src/index.js",
+  "types": "src/index.d.ts",
   "sideEffects": false,
   "exports": {
+    "types": "./index.d.ts",
     "import": "./src/index.js",
     "require": "./lib/wasmparser.js"
   },
@@ -16,23 +19,21 @@
     "url": "git+https://github.com/stellar-expert/contract-wasm-interface-parser.git"
   },
   "scripts": {
-    "build": "webpack --mode=production --config webpack.config.cjs",
-    "test": "jest",
-    "prepublish": "npm run build"
+    "prepublish": "rollup -c",
+    "test": "jest"
   },
   "peerDependencies": {
-    "@stellar/stellar-base": ">=14"
+    "@stellar/stellar-sdk": ">=16"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.2",
-    "babel-loader": "^10.1.1",
-    "jest": "^30.3.0",
-    "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2"
+    "@rollup/plugin-terser": "1.0.0",
+    "rollup": "4.62.2",
+    "jest": "30.4.2"
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "src/index.d.ts",
+    "!src/bundle.js"
   ]
 }

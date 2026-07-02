@@ -1,7 +1,3 @@
 node_modules/
 .npm
 pnpm-lock.yaml
-
-.idea
-.vscode
-
