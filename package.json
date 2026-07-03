@@ -19,7 +19,7 @@
     "url": "git+https://github.com/stellar-expert/contract-wasm-interface-parser.git"
   },
   "scripts": {
-    "prepublish": "rollup -c",
+    "prepare": "rollup -c",
     "test": "jest"
   },
   "peerDependencies": {
