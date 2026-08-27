@@ -1,6 +1,6 @@
 {
   "name": "@stellar-expert/contract-wasm-interface-parser",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "Contract interface metadata parser for binary WASM",
   "author": "orbitlens <orbit@stellar.expert>",
   "license": "MIT",
@@ -19,11 +19,11 @@
     "url": "git+https://github.com/stellar-expert/contract-wasm-interface-parser.git"
   },
   "scripts": {
-    "prepare": "rollup -c",
+    "prepublish": "rollup -c",
     "test": "jest"
   },
   "peerDependencies": {
-    "@stellar/stellar-sdk": ">=16"
+    "@stellar/stellar-sdk": ">=17"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "1.0.0",
