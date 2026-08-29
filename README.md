@@ -20,197 +20,26 @@ Example output:
 
 ```json
 {
-  "enums": {
-    "SubscriptionStatus": {
+  "unions": {
+    "Asset": {
       "cases": {
-        "Active": {
-          "value": 0
-        },
-        "Cancelled": {
-          "value": 2
-        },
-        "Suspended": {
-          "value": 1
-        }
+        "Stellar": [
+          "Address"
+        ],
+        "Other": [
+          "Symbol"
+        ]
       }
-    }
-  },
-  "errors": {
-    "AlreadyInitialized": {
-      "value": 0
-    },
-    "InvalidAmount": {
-      "value": 4
-    },
-    "InvalidHeartbeat": {
-      "value": 5
-    },
-    "InvalidSubscriptionStatusError": {
-      "value": 8
-    },
-    "InvalidThreshold": {
-      "value": 6
-    },
-    "NotInitialized": {
-      "value": 3
-    },
-    "SubscriptionNotFound": {
-      "value": 2
-    },
-    "Unauthorized": {
-      "value": 1
-    },
-    "WebhookTooLong": {
-      "value": 7
-    }
-  },
-  "functions": {
-    "admin": {
-      "inputs": {},
-      "outputs": [
-        "Option<Address>"
-      ]
-    },
-    "cancel": {
-      "inputs": {
-        "subscription_id": {
-          "type": "u64"
-        }
-      },
-      "outputs": []
-    },
-    "charge": {
-      "inputs": {
-        "subscription_ids": {
-          "type": "Vec<u64>"
-        }
-      },
-      "outputs": []
-    },
-    "config": {
-      "inputs": {
-        "config": {
-          "type": "ConfigData"
-        }
-      },
-      "outputs": []
-    },
-    "create_subscription": {
-      "inputs": {
-        "amount": {
-          "type": "u64"
-        },
-        "new_subscription": {
-          "type": "CreateSubscription"
-        }
-      },
-      "outputs": [
-        "(u64, Subscription)"
-      ]
-    },
-    "deposit": {
-      "inputs": {
-        "amount": {
-          "type": "u64"
-        },
-        "from": {
-          "type": "Address"
-        },
-        "subscription_id": {
-          "type": "u64"
-        }
-      },
-      "outputs": []
-    },
-    "fee": {
-      "inputs": {},
-      "outputs": [
-        "u64"
-      ]
-    },
-    "get_subscription": {
-      "inputs": {
-        "subscription_id": {
-          "type": "u64"
-        }
-      },
-      "outputs": [
-        "Subscription"
-      ]
-    },
-    "set_fee": {
-      "inputs": {
-        "fee": {
-          "type": "u64"
-        }
-      },
-      "outputs": []
-    },
-    "token": {
-      "inputs": {},
-      "outputs": [
-        "address"
-      ]
-    },
-    "trigger": {
-      "inputs": {
-        "timestamp": {
-          "type": "u64"
-        },
-        "trigger_hash": {
-          "type": "BytesN<32>"
-        }
-      },
-      "outputs": []
-    },
-    "update_contract": {
-      "inputs": {
-        "wasm_hash": {
-          "type": "BytesN<32>"
-        }
-      },
-      "outputs": []
-    },
-    "version": {
-      "inputs": {},
-      "outputs": [
-        "u32"
-      ]
     }
   },
   "structs": {
-    "ConfigData": {
+    "TickerAsset": {
       "fields": {
-        "admin": {
-          "type": "Address"
+        "asset": {
+          "type": "Asset"
         },
-        "fee": {
-          "type": "u64"
-        },
-        "token": {
-          "type": "Address"
-        }
-      }
-    },
-    "CreateSubscription": {
-      "fields": {
-        "asset1": {
-          "type": "TickerAsset"
-        },
-        "asset2": {
-          "type": "TickerAsset"
-        },
-        "heartbeat": {
-          "type": "u32"
-        },
-        "owner": {
-          "type": "Address"
-        },
-        "threshold": {
-          "type": "u32"
-        },
-        "webhook": {
-          "type": "Bytes"
+        "source": {
+          "type": "String"
         }
       }
     },
@@ -245,31 +74,245 @@ Example output:
         }
       }
     },
-    "TickerAsset": {
+    "ConfigData": {
       "fields": {
-        "asset": {
-          "type": "Asset"
+        "admin": {
+          "type": "Address"
         },
-        "source": {
-          "type": "string"
+        "fee": {
+          "type": "u64"
+        },
+        "token": {
+          "type": "Address"
+        }
+      }
+    },
+    "CreateSubscription": {
+      "fields": {
+        "asset1": {
+          "type": "TickerAsset"
+        },
+        "asset2": {
+          "type": "TickerAsset"
+        },
+        "heartbeat": {
+          "type": "u32"
+        },
+        "owner": {
+          "type": "Address"
+        },
+        "threshold": {
+          "type": "u32"
+        },
+        "webhook": {
+          "type": "Bytes"
         }
       }
     }
   },
-  "unions": {
-    "Asset": {
+  "errors": {
+    "AlreadyInitialized": {
+      "value": 0
+    },
+    "Unauthorized": {
+      "value": 1
+    },
+    "SubscriptionNotFound": {
+      "value": 2
+    },
+    "NotInitialized": {
+      "value": 3
+    },
+    "InvalidAmount": {
+      "value": 4
+    },
+    "InvalidHeartbeat": {
+      "value": 5
+    },
+    "InvalidThreshold": {
+      "value": 6
+    },
+    "WebhookTooLong": {
+      "value": 7
+    },
+    "InvalidSubscriptionStatusError": {
+      "value": 8
+    }
+  },
+  "enums": {
+    "SubscriptionStatus": {
       "cases": {
-        "Other": [
-          "symbol"
-        ],
-        "Stellar": [
-          "address"
-        ]
+        "Active": {
+          "value": 0
+        },
+        "Suspended": {
+          "value": 1
+        },
+        "Cancelled": {
+          "value": 2
+        }
       }
+    }
+  },
+  "functions": {
+    "config": {
+      "inputs": [
+        {
+          "name": "config",
+          "type": "ConfigData"
+        }
+      ],
+      "outputs": []
+    },
+    "set_fee": {
+      "inputs": [
+        {
+          "name": "fee",
+          "type": "u64"
+        }
+      ],
+      "outputs": []
+    },
+    "trigger": {
+      "inputs": [
+        {
+          "name": "timestamp",
+          "type": "u64"
+        },
+        {
+          "name": "trigger_hash",
+          "type": "BytesN<32>"
+        }
+      ],
+      "outputs": []
+    },
+    "update_contract": {
+      "inputs": [
+        {
+          "name": "wasm_hash",
+          "type": "BytesN<32>"
+        }
+      ],
+      "outputs": []
+    },
+    "charge": {
+      "inputs": [
+        {
+          "name": "subscription_ids",
+          "type": "Vec<u64>"
+        }
+      ],
+      "outputs": []
+    },
+    "create_subscription": {
+      "inputs": [
+        {
+          "name": "new_subscription",
+          "type": "CreateSubscription"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ],
+      "outputs": [
+        "(u64, Subscription)"
+      ]
+    },
+    "deposit": {
+      "inputs": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ],
+      "outputs": []
+    },
+    "cancel": {
+      "inputs": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        }
+      ],
+      "outputs": []
+    },
+    "get_subscription": {
+      "inputs": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        }
+      ],
+      "outputs": [
+        "Subscription"
+      ]
+    },
+    "admin": {
+      "inputs": [],
+      "outputs": [
+        "Option<Address>"
+      ]
+    },
+    "version": {
+      "inputs": [],
+      "outputs": [
+        "u32"
+      ]
+    },
+    "fee": {
+      "inputs": [],
+      "outputs": [
+        "u64"
+      ]
+    },
+    "token": {
+      "inputs": [],
+      "outputs": [
+        "Address"
+      ]
     }
   },
   "interfaceVersion": "20.0",
   "rustVersion": "1.74.0",
   "sdkVersion": "20.5.0#9e2c3022b4355b224a7a814e13ba51761eeb14bb"
+}
+```
+
+Contracts compiled with newer SDK versions may contain additional metadata. Rust doc comments are exposed as `doc`
+properties on functions, function inputs, structs, struct fields, enums, unions, errors, and their cases. Contract
+events declared with `#[contractevent]` are parsed into a separate `events` section:
+
+```json
+{
+  "events": {
+    "ZapInitializedEvent": {
+      "prefixTopics": [
+        "zap_initialized"
+      ],
+      "params": [
+        {
+          "name": "factory",
+          "type": "Address",
+          "location": "data"
+        },
+        {
+          "name": "position_manager",
+          "type": "Address",
+          "location": "data"
+        }
+      ],
+      "dataFormat": "Map",
+      "doc": "Zap router initialization event"
+    }
+  }
 }
 ```
