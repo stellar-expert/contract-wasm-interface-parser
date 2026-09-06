@@ -119,6 +119,9 @@ class SpecParser {
     parseEvent(attr, into) {
         let dataFormat
         switch (attr.dataFormat.value) {
+            case 0:
+                dataFormat = 'SingleValue'
+                break
             case 1:
                 dataFormat = 'Vec'
                 break
